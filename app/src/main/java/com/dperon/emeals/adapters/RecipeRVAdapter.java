@@ -24,13 +24,11 @@ public class RecipeRVAdapter extends
         RecyclerView.Adapter<RecipeRVAdapter.ViewHolder> {
 
     private Context context;
-    private List<Recipe> list;
+    private List<Recipe> list = new ArrayList<>();
     private OnItemClickListener onItemClickListener;
 
-    public RecipeRVAdapter(Context context, List<Recipe> list,
-                           OnItemClickListener onItemClickListener) {
+    public RecipeRVAdapter(Context context, OnItemClickListener onItemClickListener) {
         this.context = context;
-        this.list = list;
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -80,6 +78,11 @@ public class RecipeRVAdapter extends
 
     public interface OnItemClickListener {
         void onItemClick(Recipe model);
+    }
+
+    public void setRecipes(List<Recipe> recipes){
+        this.list = recipes;
+        notifyDataSetChanged();
     }
 
 }

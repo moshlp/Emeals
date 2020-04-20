@@ -37,11 +37,12 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new RecipeRVAdapter(MainActivity.this, model -> Log.d("--message", model.getPlanMobileTitle()));
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
 
         viewmodel.recipes.observe(this, recipes -> {
-            mAdapter = new RecipeRVAdapter(MainActivity.this, recipes, model -> Log.d("--message", model.getPlanMobileTitle()));
-            recyclerView.setAdapter(mAdapter);
-            mAdapter.notifyDataSetChanged();
+            mAdapter.setRecipes(recipes);
         });
 
 
