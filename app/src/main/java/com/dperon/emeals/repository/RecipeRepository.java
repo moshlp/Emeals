@@ -2,10 +2,15 @@ package com.dperon.emeals.repository;
 
 import android.app.Application;
 
+import androidx.room.Transaction;
+
 import com.dperon.emeals.dao.RecipeDao;
 import com.dperon.emeals.db.RecipeDatabase;
 import com.dperon.emeals.model.Recipe;
 import com.dperon.emeals.model.entities.RecipeEntity;
+import com.dperon.emeals.utils.Utils;
+
+import java.util.List;
 
 public class RecipeRepository {
 
@@ -16,10 +21,14 @@ public class RecipeRepository {
         dao = database.recipeDao();
     }
 
-    public void insert(RecipeEntity recipe) {
+    public void insert(List<RecipeEntity> recipes) {
         RecipeDatabase.databaseWriteExecutor.execute(() -> {
-            dao.insertRecipe(recipe);
+            dao.insertRecipe(recipes);
         });
+    }
+
+    public List<Recipe> getAll(){
+        return Utils.entityToModel(dao.getAll());
     }
 
 }

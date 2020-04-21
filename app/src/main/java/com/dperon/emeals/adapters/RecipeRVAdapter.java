@@ -1,6 +1,7 @@
 package com.dperon.emeals.adapters;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,41 +14,42 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dperon.emeals.R;
 import com.dperon.emeals.model.Recipe;
+import com.dperon.emeals.utils.Constants;
+import com.dperon.emeals.utils.Utils;
+import com.dperon.emeals.utils.Variables;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RecipeRVAdapter extends
         RecyclerView.Adapter<RecipeRVAdapter.ViewHolder> {
 
     private Context context;
     private List<Recipe> list = new ArrayList<>();
-    private OnItemClickListener onItemClickListener;
+    private ExpandableIngredientsAdapter adapter;
+    private List<String> listGroup = new ArrayList<>();
 
-    public RecipeRVAdapter(Context context, OnItemClickListener onItemClickListener) {
+
+    public RecipeRVAdapter(Context context) {
         this.context = context;
-        this.onItemClickListener = onItemClickListener;
+        listGroup.add(Constants.ING_TITLE);
+        listGroup.add(Constants.INST_TITLE);
     }
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView picture;
-        ExpandableListView instructions;
+        ExpandableListView expandableListView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.title);
             picture = itemView.findViewById(R.id.picture);
-            instructions = itemView.findViewById(R.id.instructions);
-        }
-
-        public void bind(final Recipe model,
-                         final OnItemClickListener listener) {
-            itemView.setOnClickListener(v -> listener.onItemClick(model));
+            expandableListView = itemView.findViewById(R.id.expandableListView);
         }
     }
 
@@ -64,20 +66,31 @@ public class RecipeRVAdapter extends
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Recipe item = list.get(position);
-        holder.bind(item, onItemClickListener);
         holder.title.setText(item.getPlanTitle());
-        Picasso.get().load(item.getMain().getPrimaryPictureUrl()).into(holder.picture);
-        HashMap<String, List<String>> instructions = new HashMap<>();
-        instructions.put("Instructions", new ArrayList(item.getMain().getInstructions().values()));
+        if (Variables.isNetworkConnected) {
+            //download image to storage
+            Picasso.get().load(item.getMain().getPrimaryPictureUrl()).into(Utils.picassoImageTarget(context.getApplicationContext(), "imageDir", item.getId() + ".jpeg"));
+            Picasso.get().load(item.getMain().getPrimaryPictureUrl()).into(holder.picture);
+        } else {
+            //display stored image
+            ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
+            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+            File myImageFile = new File(directory, item.getId() + ".jpeg");
+            Picasso.get().load(myImageFile).into(holder.picture);
+        }
+        HashMap<String, List<String>> options = new HashMap<>();
+        options.put(Constants.INST_TITLE, new ArrayList(item.getMain().getInstructions().values()));
+        options.put(Constants.ING_TITLE, new ArrayList(item.getMain().getIngredients().values()));
+        adapter = new ExpandableIngredientsAdapter(context, listGroup, options);
+        holder.expandableListView.setAdapter(adapter);
+
+
+
     }
 
     @Override
     public int getItemCount() {
         return list.size();
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(Recipe model);
     }
 
     public void setRecipes(List<Recipe> recipes){
