@@ -21,7 +21,7 @@ public class RecipeRepository {
         dao = database.recipeDao();
     }
 
-    public void insert(List<RecipeEntity> recipes) {
+    public void insertRecipeEntity(List<RecipeEntity> recipes) {
         RecipeDatabase.databaseWriteExecutor.execute(() -> {
             dao.insertRecipe(recipes);
         });

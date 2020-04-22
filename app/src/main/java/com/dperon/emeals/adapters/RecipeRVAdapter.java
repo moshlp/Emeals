@@ -1,15 +1,19 @@
 package com.dperon.emeals.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dperon.emeals.R;
@@ -29,14 +33,16 @@ public class RecipeRVAdapter extends
 
     private Context context;
     private List<Recipe> list = new ArrayList<>();
-    private ExpandableIngredientsAdapter adapter;
+    private ExpandableAdapter adapter;
     private List<String> listGroup = new ArrayList<>();
+    private OnItemClickListener onItemClickListener;
 
-
-    public RecipeRVAdapter(Context context) {
+    public RecipeRVAdapter(Context context, OnItemClickListener onItemClickListener) {
         this.context = context;
         listGroup.add(Constants.ING_TITLE);
         listGroup.add(Constants.INST_TITLE);
+        this.onItemClickListener = onItemClickListener;
+
     }
 
 
@@ -50,6 +56,11 @@ public class RecipeRVAdapter extends
             title = itemView.findViewById(R.id.title);
             picture = itemView.findViewById(R.id.picture);
             expandableListView = itemView.findViewById(R.id.expandableListView);
+
+        }
+        public void bind(final Recipe model,
+                         final OnItemClickListener listener) {
+            itemView.setOnClickListener(v -> listener.onItemClick(model));
         }
     }
 
@@ -66,7 +77,8 @@ public class RecipeRVAdapter extends
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Recipe item = list.get(position);
-        holder.title.setText(item.getPlanTitle());
+        holder.bind(item, onItemClickListener);
+        holder.title.setText(item.getMain().getTitle());
         if (Variables.isNetworkConnected) {
             //download image to storage
             Picasso.get().load(item.getMain().getPrimaryPictureUrl()).into(Utils.picassoImageTarget(context.getApplicationContext(), "imageDir", item.getId() + ".jpeg"));
@@ -81,11 +93,28 @@ public class RecipeRVAdapter extends
         HashMap<String, List<String>> options = new HashMap<>();
         options.put(Constants.INST_TITLE, new ArrayList(item.getMain().getInstructions().values()));
         options.put(Constants.ING_TITLE, new ArrayList(item.getMain().getIngredients().values()));
-        adapter = new ExpandableIngredientsAdapter(context, listGroup, options);
+        adapter = new ExpandableAdapter(context, listGroup, options);
         holder.expandableListView.setAdapter(adapter);
 
+        holder.title.setOnClickListener(v -> {
+            Activity activity = (Activity) context;
+            AlertDialog.Builder changeTitleAlert = new AlertDialog.Builder(context);
+            changeTitleAlert.setTitle("Change title");
+            final View customLayout = activity.getLayoutInflater().inflate(R.layout.dialog_title, null);
+            changeTitleAlert.setView(customLayout);
+            changeTitleAlert.setNeutralButton("OK",
+                    new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface arg0,
+                                            int arg1) {
 
 
+                        }
+                    });
+            // create and show the alert dialog
+            AlertDialog dialog = changeTitleAlert.create();
+            dialog.show();
+        });
     }
 
     @Override
@@ -96,6 +125,10 @@ public class RecipeRVAdapter extends
     public void setRecipes(List<Recipe> recipes){
         this.list = recipes;
         notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Recipe model);
     }
 
 }

@@ -20,7 +20,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.dperon.emeals.viewmodel.MainActivityViewmodel.TAG;
 
@@ -33,27 +36,24 @@ public class Utils {
         return new Target() {
             @Override
             public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final File myImageFile = new File(directory, imageName); // Create image file
-                        FileOutputStream fos = null;
+                new Thread(() -> {
+                    final File myImageFile = new File(directory, imageName); // Create image file
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(myImageFile);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
                         try {
-                            fos = new FileOutputStream(myImageFile);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            fos.close();
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } finally {
-                            try {
-                                fos.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                Log.e(TAG, e.getMessage());
-                            }
+                            Log.e(TAG, e.getMessage());
                         }
-                        Log.i("image", "image saved to >>>" + myImageFile.getAbsolutePath());
-
                     }
+                    Log.i("image", "image saved to >>>" + myImageFile.getAbsolutePath());
+
                 }).start();
             }
 
@@ -75,9 +75,27 @@ public class Utils {
             Recipe recipe = new Recipe();
             recipe.setMain(new Main());
             recipe.getMain().setTitle(entity.title);
-//            recipe.getMain().getInstructions(entity.getInstructions());
+            recipe.getMain().setInstructions(parseMap(entity.getInstructions()));
+            recipe.getMain().setIngredients(parseMap(entity.getIngredients()));
+            recipe.setId(entity.id);
             list.add(recipe);
         }
         return list;
+    }
+
+    private static Map<String, String> parseMap(String string) {
+        String[] array = string.split("||");
+        Map<String,String> result = new HashMap<>();
+        for(int i = 0; i < array.length;i++){
+            result.put(String.valueOf(i), array[i]);
+        }
+        return result;
+    }
+
+    public static String mapToString(Map<String, String> map) {
+        return map.entrySet()
+                .stream()
+                .map(entry -> entry.getValue())
+                .collect(Collectors.joining("||"));
     }
 }

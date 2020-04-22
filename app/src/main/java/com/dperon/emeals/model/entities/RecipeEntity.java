@@ -11,7 +11,8 @@ import lombok.Setter;
 @Entity(tableName = "recipes")
 public class RecipeEntity {
     @PrimaryKey
-    public int uid;
+    @ColumnInfo(name = "id")
+    public int id;
 
     @ColumnInfo(name = "title")
     public String title;

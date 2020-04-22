@@ -12,6 +12,7 @@ import com.dperon.emeals.api.APIInterface;
 import com.dperon.emeals.model.Recipe;
 import com.dperon.emeals.model.entities.RecipeEntity;
 import com.dperon.emeals.repository.RecipeRepository;
+import com.dperon.emeals.utils.Utils;
 import com.dperon.emeals.utils.Variables;
 
 import java.util.ArrayList;
@@ -66,6 +67,11 @@ public class MainActivityViewmodel extends AndroidViewModel {
                     list.addAll(repository.getAll());
                     return null;
                 }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    recipes.postValue(list);
+                }
             }.execute();
 
         }
@@ -92,21 +98,21 @@ public class MainActivityViewmodel extends AndroidViewModel {
     }
 
     private void storeToDB(List<Recipe> list) {
-        list.forEach(recipe -> repository.insert(recipeToEntity(list)));
+        repository.insertRecipeEntity(recipesToEntities(list));
     }
 
-    private List<RecipeEntity> recipeToEntity(List<Recipe> recipes) {
-        List<RecipeEntity> list = new ArrayList<>();
-        for (Recipe r : recipes){
+    private List<RecipeEntity> recipesToEntities(List<Recipe> recipes) {
+        List<RecipeEntity> recipeEntities = new ArrayList<>();
+        recipes.forEach(recipe -> {
             RecipeEntity entity = new RecipeEntity();
-//        entity.setImage(Utils.ToBase64(recipe.getMain().getImage()));
-            //TODO
-//        entity.setIngredients(recipe.getMain().getIngredients());
-//        entity.setInstructions(recipe.getMain().getInstructions());
-            entity.setTitle(r.getPlanTitle());
-            list.add(entity);
-        }
-        return list;
+            entity.setIngredients(Utils.mapToString(recipe.getMain().getIngredients()));
+            entity.setInstructions(Utils.mapToString(recipe.getMain().getInstructions()));
+            entity.setTitle(recipe.getPlanTitle());
+            entity.setId(recipe.getId());
+            recipeEntities.add(entity);
+        });
+
+        return recipeEntities;
     }
 
 

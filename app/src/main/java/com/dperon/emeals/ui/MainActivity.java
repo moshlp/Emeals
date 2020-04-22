@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.dperon.emeals.R;
 import com.dperon.emeals.adapters.RecipeRVAdapter;
@@ -49,10 +50,15 @@ public class MainActivity extends AppCompatActivity {
         viewmodel = new ViewModelProvider(this).get(MainActivityViewmodel.class);
 
         recyclerView = findViewById(R.id.recipesRV);
-        recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(false);
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new RecipeRVAdapter(MainActivity.this);
+        mAdapter = new RecipeRVAdapter(MainActivity.this, new RecipeRVAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Recipe model) {
+
+            }
+        });
         recyclerView.setAdapter(mAdapter);
 
         viewmodel.recipes.observe(this, recipes -> {
@@ -61,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
             mAdapter.setRecipes(recipes);
             progressBar.setVisibility(View.INVISIBLE);
         });
-
     }
 
 

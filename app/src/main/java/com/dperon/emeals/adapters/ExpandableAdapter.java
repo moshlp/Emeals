@@ -14,13 +14,13 @@ import org.w3c.dom.Text;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExpandableIngredientsAdapter extends BaseExpandableListAdapter {
+public class ExpandableAdapter extends BaseExpandableListAdapter {
 
     Context context;
     List<String> listGroup;
     HashMap<String, List<String>> listItem;
 
-    public ExpandableIngredientsAdapter(Context context, List<String> listGroup, HashMap<String, List<String>> listItem){
+    public ExpandableAdapter(Context context, List<String> listGroup, HashMap<String, List<String>> listItem){
         this.context = context;
         this.listGroup = listGroup;
         this.listItem = listItem;
