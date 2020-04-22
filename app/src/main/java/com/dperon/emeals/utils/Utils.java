@@ -84,7 +84,7 @@ public class Utils {
     }
 
     private static Map<String, String> parseMap(String string) {
-        String[] array = string.split("||");
+        String[] array = string.split("\\|\\|");
         Map<String,String> result = new HashMap<>();
         for(int i = 0; i < array.length;i++){
             result.put(String.valueOf(i), array[i]);
