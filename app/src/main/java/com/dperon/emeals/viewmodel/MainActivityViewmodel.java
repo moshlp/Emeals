@@ -3,6 +3,7 @@ package com.dperon.emeals.viewmodel;
 import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
@@ -31,6 +32,7 @@ public class MainActivityViewmodel extends AndroidViewModel {
     public MutableLiveData<List<Recipe>> recipes = new MutableLiveData<>();
     List<Recipe> list = new ArrayList<>();
     RecipeRepository repository;
+    TextView newtitle;
 
 
     public MainActivityViewmodel(Application application) {
@@ -113,6 +115,21 @@ public class MainActivityViewmodel extends AndroidViewModel {
         });
 
         return recipeEntities;
+    }
+
+    public void updateTitle(RecipeEntity entity){
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                repository.updateTitle(entity);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                recipes.postValue(list);
+            }
+        }.execute();
     }
 
 

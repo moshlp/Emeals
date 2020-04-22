@@ -31,4 +31,8 @@ public class RecipeRepository {
         return Utils.entityToModel(dao.getAll());
     }
 
+    public void updateTitle(RecipeEntity recipeEntity){
+        dao.updateTitle(recipeEntity);
+    }
+
 }

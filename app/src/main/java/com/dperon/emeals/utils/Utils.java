@@ -75,15 +75,15 @@ public class Utils {
             Recipe recipe = new Recipe();
             recipe.setMain(new Main());
             recipe.getMain().setTitle(entity.title);
-            recipe.getMain().setInstructions(parseMap(entity.getInstructions()));
-            recipe.getMain().setIngredients(parseMap(entity.getIngredients()));
+            recipe.getMain().setInstructions(stringToMap(entity.getInstructions()));
+            recipe.getMain().setIngredients(stringToMap(entity.getIngredients()));
             recipe.setId(entity.id);
             list.add(recipe);
         }
         return list;
     }
 
-    private static Map<String, String> parseMap(String string) {
+    private static Map<String, String> stringToMap(String string) {
         String[] array = string.split("\\|\\|");
         Map<String,String> result = new HashMap<>();
         for(int i = 0; i < array.length;i++){
@@ -97,5 +97,14 @@ public class Utils {
                 .stream()
                 .map(entry -> entry.getValue())
                 .collect(Collectors.joining("||"));
+    }
+
+    public static RecipeEntity modelToEntity(Recipe recipe){
+        RecipeEntity entity = new RecipeEntity();
+        entity.setId(recipe.getId());
+        entity.setTitle(recipe.getMain().getTitle());
+        entity.setInstructions(mapToString(recipe.getMain().getInstructions()));
+        entity.setIngredients(mapToString(recipe.getMain().getIngredients()));
+        return entity;
     }
 }

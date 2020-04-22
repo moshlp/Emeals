@@ -60,7 +60,7 @@ public class RecipeRVAdapter extends
         }
         public void bind(final Recipe model,
                          final OnItemClickListener listener) {
-            itemView.setOnClickListener(v -> listener.onItemClick(model));
+            title.setOnClickListener(v -> listener.onItemClick(model));
         }
     }
 
@@ -96,25 +96,25 @@ public class RecipeRVAdapter extends
         adapter = new ExpandableAdapter(context, listGroup, options);
         holder.expandableListView.setAdapter(adapter);
 
-        holder.title.setOnClickListener(v -> {
-            Activity activity = (Activity) context;
-            AlertDialog.Builder changeTitleAlert = new AlertDialog.Builder(context);
-            changeTitleAlert.setTitle("Change title");
-            final View customLayout = activity.getLayoutInflater().inflate(R.layout.dialog_title, null);
-            changeTitleAlert.setView(customLayout);
-            changeTitleAlert.setNeutralButton("OK",
-                    new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface arg0,
-                                            int arg1) {
-
-
-                        }
-                    });
-            // create and show the alert dialog
-            AlertDialog dialog = changeTitleAlert.create();
-            dialog.show();
-        });
+//        holder.title.setOnClickListener(v -> {
+//            Activity activity = (Activity) context;
+//            AlertDialog.Builder changeTitleAlert = new AlertDialog.Builder(context);
+//            changeTitleAlert.setTitle("Change title");
+//            final View customLayout = activity.getLayoutInflater().inflate(R.layout.dialog_title, null);
+//            changeTitleAlert.setView(customLayout);
+//            changeTitleAlert.setNeutralButton("OK",
+//                    new DialogInterface.OnClickListener() {
+//
+//                        public void onClick(DialogInterface arg0,
+//                                            int arg1) {
+//
+//
+//                        }
+//                    });
+//            // create and show the alert dialog
+//            AlertDialog dialog = changeTitleAlert.create();
+//            dialog.show();
+//        });
     }
 
     @Override

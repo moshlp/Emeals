@@ -16,12 +16,12 @@ import java.util.List;
 public interface RecipeDao {
 
     @Query("SELECT * FROM recipes")
-    public List<RecipeEntity> getAll();
+    List<RecipeEntity> getAll();
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public void insertRecipe(List<RecipeEntity> recipes);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertRecipe(List<RecipeEntity> recipes);
 
     @Update
-    public void updateUsers(RecipeEntity recipe);
+    void updateTitle(RecipeEntity recipeEntity);
 
 }
