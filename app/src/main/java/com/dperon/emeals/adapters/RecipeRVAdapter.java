@@ -80,6 +80,7 @@ public class RecipeRVAdapter extends
         holder.bind(item, onItemClickListener);
         holder.title.setText(item.getMain().getTitle());
         if (Variables.isNetworkConnected) {
+            //TODO check write permission
             //download image to storage
             Picasso.get().load(item.getMain().getPrimaryPictureUrl()).into(Utils.picassoImageTarget(context.getApplicationContext(), "imageDir", item.getId() + ".jpeg"));
             Picasso.get().load(item.getMain().getPrimaryPictureUrl()).into(holder.picture);
@@ -95,26 +96,6 @@ public class RecipeRVAdapter extends
         options.put(Constants.ING_TITLE, new ArrayList(item.getMain().getIngredients().values()));
         adapter = new ExpandableAdapter(context, listGroup, options);
         holder.expandableListView.setAdapter(adapter);
-
-//        holder.title.setOnClickListener(v -> {
-//            Activity activity = (Activity) context;
-//            AlertDialog.Builder changeTitleAlert = new AlertDialog.Builder(context);
-//            changeTitleAlert.setTitle("Change title");
-//            final View customLayout = activity.getLayoutInflater().inflate(R.layout.dialog_title, null);
-//            changeTitleAlert.setView(customLayout);
-//            changeTitleAlert.setNeutralButton("OK",
-//                    new DialogInterface.OnClickListener() {
-//
-//                        public void onClick(DialogInterface arg0,
-//                                            int arg1) {
-//
-//
-//                        }
-//                    });
-//            // create and show the alert dialog
-//            AlertDialog dialog = changeTitleAlert.create();
-//            dialog.show();
-//        });
     }
 
     @Override

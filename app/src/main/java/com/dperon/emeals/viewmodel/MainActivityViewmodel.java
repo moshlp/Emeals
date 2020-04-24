@@ -32,8 +32,6 @@ public class MainActivityViewmodel extends AndroidViewModel {
     public MutableLiveData<List<Recipe>> recipes = new MutableLiveData<>();
     List<Recipe> list = new ArrayList<>();
     RecipeRepository repository;
-    TextView newtitle;
-
 
     public MainActivityViewmodel(Application application) {
         super(application);
@@ -41,7 +39,6 @@ public class MainActivityViewmodel extends AndroidViewModel {
         retrofit = APIClient.getClient();
         apiInterface = retrofit.create(APIInterface.class);
         getRecipes();
-
     }
 
     private void getRecipes() {

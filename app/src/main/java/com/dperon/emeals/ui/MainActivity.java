@@ -24,6 +24,7 @@ import com.dperon.emeals.adapters.RecipeRVAdapter;
 import com.dperon.emeals.model.Recipe;
 import com.dperon.emeals.model.entities.RecipeEntity;
 import com.dperon.emeals.utils.CheckNetwork;
+import com.dperon.emeals.utils.Constants;
 import com.dperon.emeals.utils.Utils;
 import com.dperon.emeals.viewmodel.MainActivityViewmodel;
 
@@ -36,8 +37,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecipeRVAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private static final String[] PERMISSIONS = { Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+    private static final String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,35 +60,28 @@ public class MainActivity extends AppCompatActivity {
 //        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new RecipeRVAdapter(MainActivity.this, new RecipeRVAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Recipe model) {
+        mAdapter = new RecipeRVAdapter(MainActivity.this, model -> {
             AlertDialog.Builder changeTitleAlert = new AlertDialog.Builder(MainActivity.this);
             changeTitleAlert.setTitle("Change title");
             final View customLayout = getLayoutInflater().inflate(R.layout.dialog_title, null);
             changeTitleAlert.setView(customLayout);
             TextView newtitle = customLayout.findViewById(R.id.newtitle);
-                newtitle.setText(model.getMain().getTitle());
+            newtitle.setText(model.getMain().getTitle());
             changeTitleAlert.setNeutralButton("OK",
-                    new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface arg0,
-                                            int arg1) {
-                            if (newtitle.length() != 0){
-                                model.getMain().setTitle(newtitle.getText().toString());
-                                RecipeEntity entity = Utils.modelToEntity(model);
-                                viewmodel.updateTitle(entity);
-                            }
+                    (arg0, arg1) -> {
+                        if (newtitle.length() != 0) {
+                            model.getMain().setTitle(newtitle.getText().toString());
+                            RecipeEntity entity = Utils.modelToEntity(model);
+                            viewmodel.updateTitle(entity);
                         }
                     });
             AlertDialog dialog = changeTitleAlert.create();
             dialog.show();
-        }});
+        });
 
         recyclerView.setAdapter(mAdapter);
 
         viewmodel.recipes.observe(this, recipes -> {
-            //TODO cambiar progressbar
             progressBar.setVisibility(View.VISIBLE);
             mAdapter.setRecipes(recipes);
             progressBar.setVisibility(View.INVISIBLE);
@@ -94,15 +89,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void verifyPermissions()
-    {
+    public void verifyPermissions() {
         // This will return the current Status
         int permissionExternalMemory = ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-        if(permissionExternalMemory != PackageManager.PERMISSION_GRANTED)
-        {
+        if (permissionExternalMemory != PackageManager.PERMISSION_GRANTED) {
             // If permission not granted then ask for permission real time.
-            ActivityCompat.requestPermissions(MainActivity.this,PERMISSIONS,1);
+            ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, 1);
         }
     }
+
 }
