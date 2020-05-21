@@ -1,5 +1,5 @@
 # Emeals
-## Sample app including use of:
+## This App includes use of:
 - MVVM
 - Viewmodel
 - Livedata
