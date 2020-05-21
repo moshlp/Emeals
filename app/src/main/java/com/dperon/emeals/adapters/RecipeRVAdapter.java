@@ -1,19 +1,15 @@
 package com.dperon.emeals.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dperon.emeals.R;
@@ -42,9 +38,7 @@ public class RecipeRVAdapter extends
         listGroup.add(Constants.ING_TITLE);
         listGroup.add(Constants.INST_TITLE);
         this.onItemClickListener = onItemClickListener;
-
     }
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;

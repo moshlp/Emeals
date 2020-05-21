@@ -11,7 +11,6 @@ import com.dperon.emeals.model.entities.RecipeEntity;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 @Database(entities = {RecipeEntity.class}, version = 1)
 public abstract class RecipeDatabase extends RoomDatabase {

@@ -1,50 +1,42 @@
 package com.dperon.emeals.ui;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.dperon.emeals.R;
 import com.dperon.emeals.adapters.RecipeRVAdapter;
-import com.dperon.emeals.model.Recipe;
+import com.dperon.emeals.databinding.ActivityMainBinding;
 import com.dperon.emeals.model.entities.RecipeEntity;
 import com.dperon.emeals.utils.CheckNetwork;
-import com.dperon.emeals.utils.Constants;
 import com.dperon.emeals.utils.Utils;
 import com.dperon.emeals.viewmodel.MainActivityViewmodel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     MainActivityViewmodel viewmodel;
-    private RecyclerView recyclerView;
     private RecipeRVAdapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
     private static final String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-    private ProgressBar progressBar;
+    private ActivityMainBinding binding;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //View binding
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         //Network monitoring service
         CheckNetwork network = new CheckNetwork(getApplicationContext());
@@ -52,14 +44,10 @@ public class MainActivity extends AppCompatActivity {
 
         verifyPermissions();
 
-        progressBar = findViewById(R.id.pBar);
-
         viewmodel = new ViewModelProvider(this).get(MainActivityViewmodel.class);
-
-        recyclerView = findViewById(R.id.recipesRV);
 //        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        binding.recipesRV.setLayoutManager(layoutManager);
         mAdapter = new RecipeRVAdapter(MainActivity.this, model -> {
             AlertDialog.Builder changeTitleAlert = new AlertDialog.Builder(MainActivity.this);
             changeTitleAlert.setTitle("Change title");
@@ -79,15 +67,14 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
         });
 
-        recyclerView.setAdapter(mAdapter);
+        binding.recipesRV.setAdapter(mAdapter);
 
         viewmodel.recipes.observe(this, recipes -> {
-            progressBar.setVisibility(View.VISIBLE);
+            binding.pBar.setVisibility(View.VISIBLE);
             mAdapter.setRecipes(recipes);
-            progressBar.setVisibility(View.INVISIBLE);
+            binding.pBar.setVisibility(View.INVISIBLE);
         });
     }
-
 
     public void verifyPermissions() {
         // This will return the current Status
